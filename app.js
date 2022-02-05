@@ -20,17 +20,17 @@ import controller from './BlockchainController.js';
 class ApplicationServer {
 
 	constructor() {
-		//Express application object
+		// Express application object
 		this.app = express();
-		//Blockchain class object
+		// Blockchain class object
 		this.blockchain = new Blockchain();
-		//Method that initialized the express framework.
+		// Method that initialized the express framework.
 		this.initExpress();
-		//Method that initialized middleware modules
+		// Method that initialized middleware modules
 		this.initExpressMiddleWare();
-		//Method that initialized the controllers where you defined the endpoints
+		// Method that initialized the controllers where you defined the endpoints
 		this.initControllers();
-		//Method that run the express application.
+		// Method that run the express application.
 		this.start();
 	}
 

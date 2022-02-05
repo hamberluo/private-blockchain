@@ -6,7 +6,7 @@
  */
 class BlockchainController {
 
-    //The constructor receive the instance of the express.js app and the Blockchain class
+    // The constructor receive the instance of the express.js app and the Blockchain class
     constructor(app, blockchainObj) {
         this.app = app;
         this.blockchain = blockchainObj;
