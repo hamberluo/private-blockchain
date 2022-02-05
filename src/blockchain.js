@@ -64,7 +64,19 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-
+            let pendingBlock = block;
+            let height = await self.getChainHeight();
+            pendingBlock.time = new Date().getTime().toString().slice(0, -3);
+            pendingBlock.height = height + 1;
+            pendingBlock.hash = SHA256.SHA256(JSON.stringify(pendingBlock)).toString();
+            if (height >= 0) {
+                // Not Genesis Block
+                let previousBlock = self.chain[self.height];
+                pendingBlock.previousBlockHash = previousBlock.hash;
+            }
+            self.chain.push(pendingBlock);
+            self.height = self.chain.length - 1;
+            resolve(pendingBlock);
         });
     }
 
