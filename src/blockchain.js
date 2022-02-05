@@ -144,7 +144,12 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
-
+            let block = self.chain.filter(p => p.hash === hash)[0];
+            if (block) {
+                resolve(block);
+            } else {
+                resolve(null);
+            }
         });
     }
 
@@ -175,7 +180,15 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-
+            self.chain.forEach((b) => {
+                let data = b.getBData();
+                if (data) {
+                    if (data.owner === address) {
+                        stars.push(data);
+                    }
+                }
+            });
+            resolve(stars);
         });
     }
 
@@ -183,13 +196,38 @@ class Blockchain {
      * This method will return a Promise that will resolve with the list of errors when validating the chain.
      * Steps to validate:
      * 1. You should validate each block using `validateBlock`
-     * 2. Each Block should check the with the previousBlockHash
+     * 2. Each Block should check with the previousBlockHash
      */
     validateChain() {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-
+            let promises = [];
+            let chainIndex = 0;
+            self.chain.forEach(block => {
+                promises.push(block.validate());
+                if (block.height > 0) {
+                    let previousBlockHash = block.previousBlockHash;
+                    let blockHash = chain[chainIndex - 1].hash;
+                    if (blockHash != previousBlockHash) {
+                        errorLog.push(`Error - Block Height: ${block.height} - Previous Hash don't match.`);
+                    }
+                }
+                chainIndex++;
+            });
+            Promise.all(promises).then((results) => {
+                chainIndex = 0;
+                results.forEach(valid => {
+                    if (!valid) {
+                        errorLog.push(`Error - Block Height: ${self.chain[chainIndex].height} - Has been Tampered.`);
+                    }
+                    chainIndex++;
+                });
+                resolve(errorLog);
+            }).catch((err) => {
+                console.log(err);
+                reject(err);
+            });
         });
     }
 
