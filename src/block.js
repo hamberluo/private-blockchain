@@ -39,14 +39,16 @@ class Block {
      */
     validate() {
         let self = this;
+        // Return a new promise to allow the method be called asynchronous.
         return new Promise((resolve, reject) => {
-            // Save in auxiliary variable the current block hash
+            // Create an auxiliary variable and store the current hash of the block in it (this represent the block object)
             let oldHash = self.hash;
 
-            // Recalculate the hash of the Block
-            let newHash = SHA256(JSON.stringify(this)).toString();
+            // Recalculate the hash of the entire block (Use SHA256 from crypto-js library)
+            let newHash = SHA256.SHA256(JSON.stringify(this)).toString();
 
-            // Returning if the Block is valid
+            // Compare if the auxiliary hash value is different from the calculated one.
+            // Resolve true or false depending if it is valid or not.
             resolve(oldHash === newHash);
         });
     }
@@ -63,16 +65,15 @@ class Block {
     getBData() {
         // Getting the encoded data saved in the Block
         let encodedData = this.body;
-        // Decoding the data to retrieve the JSON representation of the object
+        // Use hex2ascii module to decode the data
         let json = hex2ascii(encodedData);
-        // Parse the data to an object to be retrieve.
+        // Because data is a javascript object use JSON.parse(string) to get the Javascript Object
         let data = JSON.parse(json);
 
-        // Resolve with the data if the object isn't the Genesis block
+        // Resolve with the data and make sure that you don't need to return the data for the genesis block OR reject with an error.
         if (data && this.height > 0) {
             return data;
         }
-
     }
 
 }
