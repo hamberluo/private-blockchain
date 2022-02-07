@@ -45,7 +45,10 @@ class Block {
             let oldHash = self.hash;
 
             // Recalculate the hash of the entire block (Use SHA256 from crypto-js library)
-            let newHash = SHA256.SHA256(JSON.stringify(this)).toString();
+            let newHash = SHA256.SHA256(JSON.stringify({
+                ...self,
+                "hash": null
+            })).toString();
 
             // Compare if the auxiliary hash value is different from the calculated one.
             // Resolve true or false depending if it is valid or not.
