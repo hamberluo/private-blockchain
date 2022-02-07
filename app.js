@@ -11,11 +11,27 @@ import morgan from "morgan";
 import pkg from 'body-parser';
 const { urlencoded, json } = pkg;
 
+import winston from 'winston';
+
+const logger = winston.createLogger({
+	level: 'info',
+	format: winston.format.json(),
+	transports: [
+		new winston.transports.File({ filename: 'combined.log' }),
+	],
+});
+if (process.env.NODE_ENV !== 'production') {
+	logger.add(new winston.transports.Console({
+		format: winston.format.json(),
+	}));
+}
+
 /**
  * Require the Blockchain class. This allow us to have only one instance of the class.
  */
 import { Blockchain } from './src/blockchain.js';
 import controller from './BlockchainController.js';
+import debug from "debug";
 
 class ApplicationServer {
 
@@ -51,7 +67,7 @@ class ApplicationServer {
 	start() {
 		let self = this;
 		this.app.listen(this.app.get("port"), () => {
-			console.log(`Server Listening for port: ${self.app.get("port")}`);
+			logger.info(`Server Listening for port: ${self.app.get("port")}`);
 		});
 	}
 
