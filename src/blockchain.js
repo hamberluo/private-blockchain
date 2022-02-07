@@ -131,12 +131,13 @@ class Blockchain {
         // Must resolve with the Block added or reject with an error.
         return new Promise(async (resolve, reject) => {
             let time = parseInt(message.split(':')[1]);
-            let now = parseInt(new Date().getTime().toString().slice(0, -3));
+            // Represented in seconds
+            let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
 
             // Time elapsed between when the message was sent and the current time must be less that 5 minutes
             const five = 5;
-            let min5 = five * 60 * 1000;
-            if ((time + min5) >= now) {
+            let fiveMinsInSec = five * 60;
+            if ((time + fiveMinsInSec) >= currentTime) {
                 // Must verify the message with wallet address and signature: bitcoinMessage.verify(message, address, signature)
                 let isValid = bitcoinMessage.verify(message, address, signature);
                 if (isValid) {
