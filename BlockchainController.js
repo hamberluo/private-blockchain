@@ -117,6 +117,14 @@ class BlockchainController {
         });
     }
 
+    // This endpoint allows you to validate chain
+    validateChain() {
+        this.app.get("/validateChain", async (req, res) => {
+            let errors = await this.blockchain.validateChain();
+            return res.status(200).json(errors);
+        });
+    }
+
 }
 
 export default (app, blockchainObj) => { return new BlockchainController(app, blockchainObj); };

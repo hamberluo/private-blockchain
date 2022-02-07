@@ -222,7 +222,7 @@ class Blockchain {
      */
     validateChain() {
         let self = this;
-        let errorLog = [];
+        let errors = [];
         // Must return a Promise that will resolve with the list of errors when validating the chain
         return new Promise(async (resolve, reject) => {
             let promises = [];
@@ -235,7 +235,7 @@ class Blockchain {
                     let previousBlockHash = block.previousBlockHash;
                     let blockHash = chain[chainIndex - 1].hash;
                     if (blockHash != previousBlockHash) {
-                        errorLog.push(`Error - Block Height: ${block.height} - Previous Hash don't match.`);
+                        errors.push(`Error - Block Height: ${block.height} - Previous Hash don't match.`);
                     }
                 }
                 chainIndex++;
@@ -244,11 +244,11 @@ class Blockchain {
                 chainIndex = 0;
                 results.forEach(valid => {
                     if (!valid) {
-                        errorLog.push(`Error - Block Height: ${self.chain[chainIndex].height} - Has been Tampered.`);
+                        errors.push(`Error - Block Height: ${self.chain[chainIndex].height} - Has been Tampered.`);
                     }
                     chainIndex++;
                 });
-                resolve(errorLog);
+                resolve(errors);
             }).catch((err) => {
                 console.log(err);
                 reject(err);
